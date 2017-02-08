@@ -33,35 +33,26 @@ public class Kafka_Producer {
           BufferedReader br = null;
 		FileReader fr = null;
                 try {
-                    Class.forName("com.mysql.jdbc.Driver");
-                    Connection conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/kafka_db","root","");
                     props.load(new FileInputStream("C://Kafka_Producer/config_producer.properties"));  
-                    Statement stmt= conn.createStatement();
-                    ResultSet rs= stmt.executeQuery("select * from kafka_test_tb");
-                    
+                    // get the properties and print  
+                    //props.list(System.out);  
+                    //Reading each property value  
                     String FILENAME=props.getProperty("FILENAME"); 
                     String TOPIC=props.getProperty("TOPIC");  
 			fr = new FileReader(FILENAME);
 			br = new BufferedReader(fr);
 			String sCurrentLine;
 			br = new BufferedReader(new FileReader(FILENAME));
-                       
+                        //System.out.println(br.toString()+"test");
                         
-                        String d="";
-			while (rs.next()) 
+			while ((sCurrentLine = br.readLine()) != null) 
                         {
                              
-                                 producer.send(new ProducerRecord<String, String>(TOPIC,rs.getString(1))); // This publishes message on given topic
-                                
-                                System.out.println("--> Message [" + rs.getString(1) + "] sent.Check message on Consumer's program console");
-                                d=rs.getString(1);
-				
+                                 producer.send(new ProducerRecord<String, String>(TOPIC,sCurrentLine)); // This publishes message on given topic
+                                //if("Y".equals(sCurrentLine)){ break; }
+                                System.out.println("--> Message [" + sCurrentLine + "] sent.Check message on Consumer's program console");
+				//System.out.println(sCurrentLine);
 			}
-                        System.out.println(d);
-                        String sql = "delete from kafka_test_tb";
-                                stmt=conn.prepareStatement(sql);
-                                stmt.execute(sql);
-
                         PrintWriter writer = new PrintWriter(FILENAME);
                         writer.print("");
                         writer.close();
